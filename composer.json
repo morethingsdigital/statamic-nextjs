@@ -1,0 +1,39 @@
+{
+    "name": "morethingsdigital/statamic-nextjs",
+    "description": "Manage On-demand revalidation for next.js",
+    "keywords": [
+        "statamic",
+        "deployment",
+        "next.js"
+    ],
+    "require": {
+        "php": ">=8.1",
+        "statamic/cms": "^4.23"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Morethingsdigital\\StatamicNextjs\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "morethingsdigital GmbH",
+            "email": "hi@morethings.digital",
+            "role": "Maintainer"
+        },
+        {
+            "name": "Christoph Stockinger",
+            "email": "christoph@morethings.digital",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "vercel-statamic@morethings.digital"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    }
+}
