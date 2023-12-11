@@ -3,6 +3,8 @@
 namespace Morethingsdigital\StatamicNextjs;
 
 use Illuminate\Support\Facades\Blade;
+use Statamic\Facades\File;
+use Statamic\Facades\CP\Nav;
 use Statamic\Facades\Permission;
 use Statamic\Providers\AddonServiceProvider;
 
@@ -19,10 +21,6 @@ class ServiceProvider extends AddonServiceProvider
     protected $routes = [
         'cp' => __DIR__ . '/../routes/cp.php'
     ];
-
-    // protected $publishables = [
-    //     __DIR__ . '/../resources/svg' => 'svg',
-    // ];
 
     protected $listen = [
         // EntryCreated::class => [
@@ -61,79 +59,24 @@ class ServiceProvider extends AddonServiceProvider
         }
 
         $this
-            ->registerAddonConfig()
             ->bootPermissions()
-            ->bootAddonNav()
+            ->bootNavigation()
+            ->bootCommands()
+            ->bootPublishables()
             ->registerBladeComponents();
-        // ->registerListeners();
     }
 
-    protected function bootAddonNav(): self
+    protected function bootNavigation(): self
     {
-        //     $items = [];
-        //     $items[] = [
-        //         'key' => 'Dashboard',
-        //         'isActive' => Route::current() === 'vercel-statamic.index',
-        //         'isDisabled' => false,
-        //         'isPreview' => false,
-        //         'route' => 'vercel-statamic.index'
-        //     ];
-        //     $items[] = [
-        //         'key' => 'Deployments',
-        //         'isActive' => Route::current() === 'vercel-statamic.deployments.index',
-        //         'isDisabled' => false,
-        //         'isPreview' => false,
-        //         'route' => 'vercel-statamic.deployments.index'
-        //     ];
-        //     $items[] = [
-        //         'key' => 'Aliase',
-        //         'isActive' => Route::currentRouteName() === 'vercel-statamic.aliase.index',
-        //         'isDisabled' => true,
-        //         'isPreview' => true,
-        //         'route' => 'vercel-statamic.aliase.index'
-        //     ];
-        //     $items[] = [
-        //         'key' => 'Envs',
-        //         'isActive' => Route::currentRouteName() === 'vercel-statamic.envs.index',
-        //         'isDisabled' => true,
-        //         'isPreview' => true,
-        //         'route' => 'vercel-statamic.envs.index'
-        //     ];
+        Nav::extend(function ($nav) {
+            $icon = File::disk()->get(__DIR__ . '/../resources/svg/nextjs.svg') ?? '';
 
-        //     $items[] = [
-        //         'key' => 'Logs',
-        //         'isActive' => Route::currentRouteName() === 'vercel-statamic.logs.index',
-        //         'isDisabled' => true,
-        //         'isPreview' => true,
-        //         'route' => 'vercel-statamic.logs.index'
-        //     ];
-
-        //     $items[] = [
-        //         'key' => 'Webhooks',
-        //         'isActive' => Route::currentRouteName() === 'vercel-statamic.webhooks.index',
-        //         'isDisabled' => true,
-        //         'isPreview' => true,
-        //         'route' => 'vercel-statamic.webhooks.index'
-        //     ];
-
-        //     Nav::extend(function ($nav) use ($items) {
-        //         $childrens = [];
-
-        //         foreach ($items as $item) {
-        //             if (!$item['isDisabled']) $childrens[$item['key']] = cp_route($item['route']);
-        //         }
-
-        //         $nav->tools('Vercel')
-        //             ->route(
-        //                 'vercel-statamic.index'
-        //             )
-        //             ->icon('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1155 1000"><path fill="#000" d="m577.344 0 577.346 1000H0L577.344 0Z"/></svg>')
-        //             ->active('vercel')
-        //             ->can('view vercel')
-        //             ->children($childrens);
-        //     });
-
-        //     view()->share('vercelStatamicNavigationItems', $items);
+            $nav
+                ->create('Next.js')
+                ->route('nextjs.index')
+                ->section('Tools')
+                ->icon($icon);
+        });
 
         return $this;
     }
@@ -145,12 +88,12 @@ class ServiceProvider extends AddonServiceProvider
                 $permission
                     ->label('View Next.js')
                     ->children([
-                        // Permission::make('edit vercel')
-                        //     ->label('Edit Vercel')
-                        //     ->children([
-                        //         Permission::make('create vercel')->label('Create Vercel'),
-                        //         Permission::make('delete vercel')->label('Delete Vercel'),
-                        //     ]),
+                        Permission::make('invalidate nextjs')
+                            ->label('Invalidierung von Tags')
+                            ->children([
+                                Permission::make('invalidate tag nextjs')->label('Invalidierung einzelner Tags'),
+                                Permission::make('invalidate all nextjs')->label('Invalidierung aller Tags'),
+                            ]),
                     ]);
             });
         });
@@ -158,22 +101,30 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
+    protected function bootCommands()
+    {
+        $this->commands([
+            // 
+        ]);
+
+        return $this;
+    }
+
     protected function registerBladeComponents(): self
     {
-        Blade::componentNamespace('Morethingsdigital\\StatamicNextjs\\View\\Components', 'vercel-statamic');
+        Blade::componentNamespace('Morethingsdigital\\StatamicNextjs\\View\\Components', 'statamic-nextjs');
 
         return $this;
     }
 
-    protected function registerAddonConfig(): self
-    {
+    protected function bootPublishables(): ServiceProvider
+	{
+		parent::bootPublishables();
 
-        $this->publishes([
-            __DIR__ . '/../config/nextjs.php' => config_path('nextjs.php'),
-        ], 'statamic-nextjs-config');
+		// $this->publishes([
+        //     //
+        // ], '');
 
-        $this->mergeConfigFrom(__DIR__ . '/../config/nextjs.php', 'nextjs');
-
-        return $this;
-    }
+		return $this;
+	}
 }
