@@ -35,5 +35,23 @@
         "allow-plugins": {
             "pixelfear/composer-dist-plugin": true
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan vendor:publish --tag=statamic-nextjs-config --force"
+        ]
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic x Next.js",
+            "description": "Morethings.digital Statamic Next.js addon"
+        },
+        "laravel": {
+            "providers": [
+                "Morethingsdigital\\StatamicNextjs\\ServiceProvider"
+            ]
+        }
     }
 }

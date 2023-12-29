@@ -3,6 +3,24 @@
 namespace Morethingsdigital\StatamicNextjs;
 
 use Illuminate\Support\Facades\Blade;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByAssetSaved;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByEntryCreated;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByEntryDeleted;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByEntrySaved;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByGlobalSetDeleted;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByGlobalSetSaved;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByNavDeleted;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByNavSaved;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByNavTreeSaved;
+use Statamic\Events\AssetSaved;
+use Statamic\Events\EntryCreated;
+use Statamic\Events\EntryDeleted;
+use Statamic\Events\EntrySaved;
+use Statamic\Events\GlobalSetDeleted;
+use Statamic\Events\GlobalSetSaved;
+use Statamic\Events\NavDeleted;
+use Statamic\Events\NavSaved;
+use Statamic\Events\NavTreeSaved;
 use Statamic\Facades\File;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\Permission;
@@ -10,63 +28,58 @@ use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {
-    protected $vite = [
-        'input' => [
-            'resources/js/addon.js',
-            'resources/css/addon.css'
-        ],
-        'publicDirectory' => 'resources/dist',
-    ];
+    // protected $vite = [
+    //     'input' => [
+    //         'resources/js/addon.js',
+    //         'resources/css/addon.css'
+    //     ],
+    //     'publicDirectory' => 'resources/dist',
+    // ];
 
     protected $routes = [
         'cp' => __DIR__ . '/../routes/cp.php'
     ];
 
     protected $listen = [
-        // EntryCreated::class => [
-        //     RevalidationTagByEntryCreated::class
-        // ],
-        // EntrySaved::class => [
-        //     RevalidationTagByEntrySaved::class
-        // ],
-        // EntryDeleted::class => [
-        //     RevalidationTagByEntryDeleted::class
-        // ],
-        // NavTreeSaved::class => [
-        //     RevalidationTagByNavTreeSaved::class
-        // ],
-        // NavDeleted::class => [
-        //     RevalidationTagByNavDeleted::class
-        // ],
-        // GlobalSetSaved::class => [
-        //     RevalidationTagByGlobalSetSaved::class
-        // ],
-        // GlobalSetDeleted::class => [
-        //     RevalidationTagByGlobalSetDeleted::class
-        // ],
-        // PurgeCache::class => [
-        //     RevalidateAllTags::class
-        // ]
+        EntryCreated::class => [
+            RevalidationTagByEntryCreated::class
+        ],
+        EntrySaved::class => [
+            RevalidationTagByEntrySaved::class
+        ],
+        EntryDeleted::class => [
+            RevalidationTagByEntryDeleted::class
+        ],
+        GlobalSetSaved::class => [
+            RevalidationTagByGlobalSetSaved::class
+        ],
+        GlobalSetDeleted::class => [
+            RevalidationTagByGlobalSetDeleted::class
+        ],
+        NavSaved::class => [
+            RevalidationTagByNavSaved::class
+        ],
+        NavDeleted::class => [
+            RevalidationTagByNavDeleted::class
+        ],
+        NavTreeSaved::class => [
+            RevalidationTagByNavTreeSaved::class
+        ],
+        AssetSaved::class => [
+            RevalidationTagByAssetSaved::class
+        ]
     ];
-
-    protected $viewNamespace = 'nextjs';
 
     public function bootAddon()
     {
-
-        if (!config('nextjs.enabled')) {
-            return;
-        }
-
-        $this
-            ->bootPermissions()
-            ->bootNavigation()
-            ->bootCommands()
-            ->bootPublishables()
-            ->registerBladeComponents();
+        $this->registerAddonConfig();
+        $this->bootPermissions();
+        $this->bootNavigation();
+        $this->registerBladeComponents();
+        $this->bootCommands();
     }
 
-    protected function bootNavigation(): self
+    protected function bootNavigation()
     {
         Nav::extend(function ($nav) {
             $icon = File::disk()->get(__DIR__ . '/../resources/svg/nextjs.svg') ?? '';
@@ -77,11 +90,9 @@ class ServiceProvider extends AddonServiceProvider
                 ->section('Tools')
                 ->icon($icon);
         });
-
-        return $this;
     }
 
-    protected function bootPermissions(): self
+    protected function bootPermissions()
     {
         Permission::group('nextjs', 'Next.js', function () {
             Permission::register('view nextjs', function ($permission) {
@@ -97,34 +108,27 @@ class ServiceProvider extends AddonServiceProvider
                     ]);
             });
         });
-
-        return $this;
     }
 
     protected function bootCommands()
     {
-        $this->commands([
-            // 
-        ]);
+        $this->commands([]);
 
         return $this;
     }
 
-    protected function registerBladeComponents(): self
+    protected function registerBladeComponents()
     {
-        Blade::componentNamespace('Morethingsdigital\\StatamicNextjs\\View\\Components', 'statamic-nextjs');
-
-        return $this;
+        Blade::componentNamespace('Morethingsdigital\\StatamicNextjs\\View\\Components', 'nextjs');
     }
 
-    protected function bootPublishables(): ServiceProvider
-	{
-		parent::bootPublishables();
+    protected function registerAddonConfig()
+    {
 
-		// $this->publishes([
-        //     //
-        // ], '');
+        $this->mergeConfigFrom(__DIR__ . '/../config/nextjs.php', 'statamic.nextjs');
 
-		return $this;
-	}
+        $this->publishes([
+            __DIR__ . '/../config/nextjs.php' => config_path('statamic/nextjs.php'),
+        ], 'statamic-nextjs-config');
+    }
 }

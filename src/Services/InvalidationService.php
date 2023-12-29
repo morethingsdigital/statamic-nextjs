@@ -13,11 +13,11 @@ class InvalidationService
 
   public function __construct(private readonly TagService $tagService)
   {
-    if (config('nextjs.enabled')) {
-      if (is_null(config('nextjs.revalidation_url'))) throw new Exception('revalidation url not defined');
+    if (config('statamic.nextjs.enabled')) {
+      if (is_null(config('statamic.nextjs.revalidation_url'))) throw new Exception('revalidation url not defined');
 
       $headers = $this->getHeaders();
-      $this->request = Http::withHeaders($headers)->baseUrl(config('nextjs.revalidation_url'));
+      $this->request = Http::withHeaders($headers)->baseUrl(config('statamic.nextjs.revalidation_url'));
     }
   }
 
@@ -30,8 +30,7 @@ class InvalidationService
     try {
       if (!$this->request) throw new Exception('request not defined');
 
-      $key = config('nextjs.revalidation_type') ?? 'tag';
-
+      $key = config('statamic.nextjs.revalidation_type') ?? 'tag';
       $response = $this->request->get('', [
         $key  => $tag
       ]);
@@ -53,7 +52,7 @@ class InvalidationService
     $headers['Content-Type'] = 'application/json';
 
     if (!is_null(config('nextjs.revalidation_secret')))
-      $headers['Authorization'] = config('nextjs.revalidation_secret');
+      $headers['Authorization'] = config('statamic.nextjs.revalidation_secret');
 
 
     return $headers;

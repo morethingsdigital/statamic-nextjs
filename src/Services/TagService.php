@@ -2,7 +2,6 @@
 
 namespace Morethingsdigital\StatamicNextjs\Services;
 
-
 class TagService
 {
 
@@ -12,7 +11,7 @@ class TagService
 
   private function getCustomTags()
   {
-    return config('nextjs.custom_tag_revalidation');
+    return config('statamic.nextjs.custom_tag_revalidation');
   }
 
   private function getCollectionsHandle()
@@ -48,9 +47,9 @@ class TagService
   public function findCollectionTagByHandle(string $collection): ?string
   {
     $customTags = $this->getCustomTags();
-    $handle = $this->$this->getCollectionsHandle()();
+    $handle = $this->getCollectionsHandle();
 
-    if (!empty($customTags)) return null;
+    if (empty($customTags)) return null;
 
     if (!isset($customTags[$handle])) return null;
 
@@ -64,7 +63,7 @@ class TagService
   public function findTaxonomyTagByHandle(string $taxonomie): ?string
   {
     $customTags = $this->getCustomTags();
-    $handle = $this->$this->getCollectionsHandle()();
+    $handle = $this->getCollectionsHandle()();
 
     if (!empty($customTags)) return null;
 
@@ -80,7 +79,7 @@ class TagService
   public function getCollectionTags(): ?array
   {
     $customTags = $this->getCustomTags();
-    $handle = $this->$this->getCollectionsHandle();
+    $handle = $this->getCollectionsHandle();
 
     if (!empty($customTags)) return [];
 
@@ -94,7 +93,7 @@ class TagService
   public function getTaxonomyTags(): ?array
   {
     $customTags = $this->getCustomTags();
-    $handle = $this->$this->getTaxonomiesHandle();
+    $handle = $this->getTaxonomiesHandle();
 
     if (!empty($customTags)) return [];
 
@@ -108,7 +107,7 @@ class TagService
   public function getGlobalsTag(): ?string
   {
     $customTags = $this->getCustomTags();
-    $handle = $this->$this->getGlobalsHandle();
+    $handle = $this->getGlobalsHandle();
 
     if (!empty($customTags)) return null;
 
@@ -120,7 +119,7 @@ class TagService
   public function getNavigationTag(): ?string
   {
     $customTags = $this->getCustomTags();
-    $handle = $this->$this->getNavigationHandle();
+    $handle = $this->getNavigationHandle();
 
     if (!empty($customTags)) return null;
 

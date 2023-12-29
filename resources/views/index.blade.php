@@ -19,9 +19,9 @@
 
 
 
-    @include('statamic::partials.docs-callout', [
+    {{-- @include('statamic::partials.docs-callout', [
         'topic' => 'Statamic x Next.js',
         'url' => 'https://statamic-nextjs.morethings.digital/docs',
-    ])
+    ]) --}}
 
 @endsection
