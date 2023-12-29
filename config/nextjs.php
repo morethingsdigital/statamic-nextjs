@@ -2,7 +2,7 @@
 
 return [
   'enabled' => env('STATAMIC_NEXTJS_ENABLED', true),
-  'revalidation_url' => env('STATAMIC_NEXTJS_REVALIDATION_URL', 'http://localhost:3000/api/revalidate'),
+  'revalidation_urls' => env('STATAMIC_NEXTJS_REVALIDATION_URLS', []),
   'revalidation_secret' => env('STATAMIC_NEXTJS_REVALIDATION_SECRET', 'secret'),
   'revalidation_type' => env('STATAMOC_NEXTJS_REVALIDATION_TYPE', 'tag'), // tag or path
   'custom_tag_revalidation' => [

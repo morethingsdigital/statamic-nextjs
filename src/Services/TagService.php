@@ -2,6 +2,8 @@
 
 namespace Morethingsdigital\StatamicNextjs\Services;
 
+use Illuminate\Support\Facades\Log;
+
 class TagService
 {
 
@@ -65,7 +67,7 @@ class TagService
     $customTags = $this->getCustomTags();
     $handle = $this->getCollectionsHandle()();
 
-    if (!empty($customTags)) return null;
+    if (empty($customTags)) return null;
 
     if (!isset($customTags[$handle])) return null;
 
@@ -81,7 +83,7 @@ class TagService
     $customTags = $this->getCustomTags();
     $handle = $this->getCollectionsHandle();
 
-    if (!empty($customTags)) return [];
+    if (empty($customTags)) return [];
 
     if (!isset($customTags[$handle])) return [];
 
@@ -95,7 +97,7 @@ class TagService
     $customTags = $this->getCustomTags();
     $handle = $this->getTaxonomiesHandle();
 
-    if (!empty($customTags)) return [];
+    if (empty($customTags)) return [];
 
     if (!isset($customTags[$handle])) return [];
 
@@ -109,7 +111,7 @@ class TagService
     $customTags = $this->getCustomTags();
     $handle = $this->getGlobalsHandle();
 
-    if (!empty($customTags)) return null;
+    if (empty($customTags)) return null;
 
     if (!isset($customTags[$handle])) return null;
 
@@ -121,7 +123,7 @@ class TagService
     $customTags = $this->getCustomTags();
     $handle = $this->getNavigationHandle();
 
-    if (!empty($customTags)) return null;
+    if (empty($customTags)) return null;
 
     if (!isset($customTags[$handle])) return null;
 

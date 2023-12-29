@@ -38,15 +38,12 @@ class RevalidationTagByEntrySaved
 
             if (!$tag) return;
 
-            $invalidated = $this->invalidationService->tag($tag);
+            $this->invalidationService->tag($tag);
 
-            if ($invalidated) {
-                Toast::info('Next.js Cache invalidated');
-            } else {
-                Toast::error('Next.js Cache invalidation failed');
-            }
+            Toast::info('Next.js Cache invalidated');
         } catch (Exception $exception) {
-            throw new Exception($exception->getMessage());
+            Toast::error('Next.js Cache invalidation failed');
+            Log::error($exception->getTraceAsString());
         }
     }
 }
