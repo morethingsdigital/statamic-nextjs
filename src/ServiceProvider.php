@@ -40,6 +40,8 @@ class ServiceProvider extends AddonServiceProvider
         'cp' => __DIR__ . '/../routes/cp.php'
     ];
 
+    protected $viewNamespace = 'nextjs';
+
     protected $listen = [
         EntryCreated::class => [
             RevalidationTagByEntryCreated::class
