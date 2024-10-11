@@ -3,13 +3,10 @@
 namespace Morethingsdigital\StatamicNextjs\Listeners;
 
 use Exception;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Log;
-use Morethingsdigital\StatamicNextjs\Services\InvalidationService;
-use Morethingsdigital\StatamicNextjs\Services\TagService;
+use Morethingsdigital\StatamicNextjs\Services\InvalidationGlobalsService;
+use Morethingsdigital\StatamicNextjs\Services\SiteService;
 use Statamic\Events\GlobalSetSaved;
-use Statamic\Facades\CP\Toast;
+
 
 class RevalidationTagByGlobalSetSaved
 {
@@ -17,8 +14,8 @@ class RevalidationTagByGlobalSetSaved
      * Create the event listener.
      */
     public function __construct(
-        private readonly TagService $tagService,
-        private readonly InvalidationService $invalidationService,
+        private readonly InvalidationGlobalsService $invalidationService,
+        private readonly SiteService $siteService,
     ) {
         //
     }
@@ -28,17 +25,12 @@ class RevalidationTagByGlobalSetSaved
      */
     public function handle(GlobalSetSaved $event): void
     {
-        try {
-            $tag = $this->tagService->getGlobalsTag();
+        $selectedSite = $this->siteService->currenteSite();
+        if (is_null($selectedSite)) throw new Exception('site not defined');
 
-            if (!$tag) return;
-
-            $this->invalidationService->tag($tag);
-
-            Toast::info('Next.js Cache invalidated');
-        } catch (Exception $exception) {
-            Toast::error('Next.js Cache invalidation failed');
-            Log::error($exception->getTraceAsString());
-        }
+        $this->invalidationService->invalidate(
+            selectedSite: $selectedSite,
+            globals: $event->globals
+        );
     }
 }

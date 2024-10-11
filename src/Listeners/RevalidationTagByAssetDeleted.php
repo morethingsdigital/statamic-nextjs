@@ -3,9 +3,9 @@
 namespace Morethingsdigital\StatamicNextjs\Listeners;
 
 use Morethingsdigital\StatamicNextjs\Services\InvalidationAssetService;
-use Statamic\Events\AssetSaved;
+use Statamic\Events\AssetDeleted;
 
-class RevalidationTagByAssetSaved
+class RevalidationTagByAssetDeleted
 {
     /**
      * Create the event listener.
@@ -19,7 +19,7 @@ class RevalidationTagByAssetSaved
     /**
      * Handle the event.
      */
-    public function handle(AssetSaved $event): void
+    public function handle(AssetDeleted $event): void
     {
         $this->invalidationAssetService->invalidate(
             $event->asset

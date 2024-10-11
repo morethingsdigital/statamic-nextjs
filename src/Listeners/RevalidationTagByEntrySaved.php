@@ -2,14 +2,8 @@
 
 namespace Morethingsdigital\StatamicNextjs\Listeners;
 
-use Exception;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Log;
-use Morethingsdigital\StatamicNextjs\Services\InvalidationService;
-use Morethingsdigital\StatamicNextjs\Services\TagService;
+use Morethingsdigital\StatamicNextjs\Services\InvalidationEntryService;
 use Statamic\Events\EntrySaved;
-use Statamic\Facades\CP\Toast;
 
 class RevalidationTagByEntrySaved
 {
@@ -17,8 +11,7 @@ class RevalidationTagByEntrySaved
      * Create the event listener.
      */
     public function __construct(
-        private readonly TagService $tagService,
-        private readonly InvalidationService $invalidationService,
+        private readonly InvalidationEntryService $invalidationEntryService,
     ) {
         //
     }
@@ -28,22 +21,8 @@ class RevalidationTagByEntrySaved
      */
     public function handle(EntrySaved $event): void
     {
-        try {
-            Log::info('RevalidationTagByEntrySaved');
-            $collectionHandle = $event->entry->collection()->handle();
-
-            if (!$collectionHandle) return;
-
-            $tag = $this->tagService->findCollectionTagByHandle($collectionHandle);
-
-            if (!$tag) return;
-
-            $this->invalidationService->tag($tag);
-
-            Toast::info('Next.js Cache invalidated');
-        } catch (Exception $exception) {
-            Toast::error('Next.js Cache invalidation failed');
-            Log::error($exception->getTraceAsString());
-        }
+        $this->invalidationEntryService->invalidate(
+            $event->entry
+        );
     }
 }
