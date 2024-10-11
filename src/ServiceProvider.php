@@ -3,23 +3,19 @@
 namespace Morethingsdigital\StatamicNextjs;
 
 use Illuminate\Support\Facades\Blade;
+use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByAssetDeleted;
 use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByAssetSaved;
 use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByEntryCreated;
 use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByEntryDeleted;
 use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByEntrySaved;
-use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByGlobalSetDeleted;
 use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByGlobalSetSaved;
-use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByNavDeleted;
-use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByNavSaved;
 use Morethingsdigital\StatamicNextjs\Listeners\RevalidationTagByNavTreeSaved;
+use Statamic\Events\AssetDeleted;
 use Statamic\Events\AssetSaved;
 use Statamic\Events\EntryCreated;
 use Statamic\Events\EntryDeleted;
 use Statamic\Events\EntrySaved;
-use Statamic\Events\GlobalSetDeleted;
 use Statamic\Events\GlobalSetSaved;
-use Statamic\Events\NavDeleted;
-use Statamic\Events\NavSaved;
 use Statamic\Events\NavTreeSaved;
 use Statamic\Facades\File;
 use Statamic\Facades\CP\Nav;
@@ -28,13 +24,13 @@ use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {
-    // protected $vite = [
-    //     'input' => [
-    //         'resources/js/addon.js',
-    //         'resources/css/addon.css'
-    //     ],
-    //     'publicDirectory' => 'resources/dist',
-    // ];
+    protected $vite = [
+        'input' => [
+            'resources/js/addon.js',
+            'resources/css/addon.css'
+        ],
+        'publicDirectory' => 'resources/dist',
+    ];
 
     protected $routes = [
         'cp' => __DIR__ . '/../routes/cp.php'
@@ -43,33 +39,27 @@ class ServiceProvider extends AddonServiceProvider
     protected $viewNamespace = 'nextjs';
 
     protected $listen = [
-        EntryCreated::class => [
-            RevalidationTagByEntryCreated::class
-        ],
-        EntrySaved::class => [
-            RevalidationTagByEntrySaved::class
-        ],
-        EntryDeleted::class => [
-            RevalidationTagByEntryDeleted::class
-        ],
-        GlobalSetSaved::class => [
-            RevalidationTagByGlobalSetSaved::class
-        ],
-        GlobalSetDeleted::class => [
-            RevalidationTagByGlobalSetDeleted::class
-        ],
-        NavSaved::class => [
-            RevalidationTagByNavSaved::class
-        ],
-        NavDeleted::class => [
-            RevalidationTagByNavDeleted::class
-        ],
-        NavTreeSaved::class => [
-            RevalidationTagByNavTreeSaved::class
-        ],
-        AssetSaved::class => [
-            RevalidationTagByAssetSaved::class
-        ]
+        // EntryCreated::class => [
+        //     RevalidationTagByEntryCreated::class
+        // ],
+        // EntrySaved::class => [
+        //     RevalidationTagByEntrySaved::class
+        // ],
+        // EntryDeleted::class => [
+        //     RevalidationTagByEntryDeleted::class
+        // ],
+        // GlobalSetSaved::class => [
+        //     RevalidationTagByGlobalSetSaved::class
+        // ],
+        // NavTreeSaved::class => [
+        //     RevalidationTagByNavTreeSaved::class
+        // ],
+        // AssetSaved::class => [
+        //     RevalidationTagByAssetSaved::class
+        // ],
+        // AssetDeleted::class => [
+        //     RevalidationTagByAssetDeleted::class
+        // ],
     ];
 
     public function bootAddon()
