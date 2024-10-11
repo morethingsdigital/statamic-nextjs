@@ -2,131 +2,104 @@
 
 namespace Morethingsdigital\StatamicNextjs\Services;
 
-use Illuminate\Support\Facades\Log;
-
 class TagService
 {
 
-  public function __construct()
-  {
-  }
+    public function __construct() {}
 
-  private function getCustomTags()
-  {
-    return config('statamic.nextjs.custom_tag_revalidation');
-  }
+    private function getCustomTags()
+    {
+        return config('statamic.nextjs.custom_tag_revalidation');
+    }
 
-  private function getCollectionsHandle()
-  {
-    return 'collections';
-  }
+    public function getCollectionsHandle()
+    {
+        return 'collections';
+    }
 
-  private function getGlobalsHandle()
-  {
-    return 'globals';
-  }
+    public function getGlobalsHandle()
+    {
+        return 'globals';
+    }
 
-  private function getNavigationHandle()
-  {
-    return 'navigation';
-  }
+    public function getNavigationHandle()
+    {
+        return 'navigation';
+    }
 
-  private function getTaxonomiesHandle()
-  {
-    return 'taxonomies';
-  }
+    public function getTaxonomiesHandle()
+    {
+        return 'taxonomies';
+    }
 
-  public function all()
-  {
-    return array_merge(
-      $this->getCollectionTags(),
-      $this->getTaxonomyTags(),
-      array($this->getGlobalsTag()),
-      array($this->getNavigationTag()),
-    );
-  }
+    public function getAssetsHandle()
+    {
+        return 'assets';
+    }
 
-  public function findCollectionTagByHandle(string $collection): ?string
-  {
-    $customTags = $this->getCustomTags();
-    $handle = $this->getCollectionsHandle();
+    public function all(string $selectedSite): array
+    {
+        return collect(array_merge(
+            $this->findCollectionTags(selectedSite: $selectedSite),
+            $this->findTaxonomyTags(selectedSite: $selectedSite),
+            $this->findGlobalsTags(selectedSite: $selectedSite),
+            $this->findNavigationTags(selectedSite: $selectedSite),
+        ))->unique()->toArray();
+    }
 
-    if (empty($customTags)) return null;
+    public function findCollectionTagsByHandle(string $selectedSite, string $collection): array
+    {
+        $customTags = $this->getCustomTags();
+        $handle = $this->getCollectionsHandle();
 
-    if (!isset($customTags[$handle])) return null;
+        return $customTags[$selectedSite][$handle][$collection] ?? [];
+    }
 
-    if (!is_array($customTags[$handle])) return null;
+    public function findTaxonomyTagsByHandle(string $selectedSite, string $taxonomie): array
+    {
+        $customTags = $this->getCustomTags();
+        $handle = $this->getCollectionsHandle()();
 
-    if (!array_key_exists($collection, $customTags[$handle])) return null;
+        return $customTags[$selectedSite][$handle][$taxonomie] ?? [];
+    }
 
-    return $customTags[$handle][$collection];
-  }
+    public function findCollectionTags(string $selectedSite): array
+    {
+        $customTags = $this->getCustomTags();
+        $handle = $this->getCollectionsHandle();
 
-  public function findTaxonomyTagByHandle(string $taxonomie): ?string
-  {
-    $customTags = $this->getCustomTags();
-    $handle = $this->getCollectionsHandle()();
+        return collect($customTags[$selectedSite][$handle] ?? [])->flatten()->unique()->toArray() ?? [];
+    }
 
-    if (empty($customTags)) return null;
+    public function findTaxonomyTags(string $selectedSite): array
+    {
+        $customTags = $this->getCustomTags();
+        $handle = $this->getTaxonomiesHandle();
 
-    if (!isset($customTags[$handle])) return null;
+        return array_values($customTags[$selectedSite][$handle] ?? []) ?? [];
+    }
 
-    if (!is_array($customTags[$handle])) return null;
+    public function findGlobalsTags(string $selectedSite): array
+    {
+        $customTags = $this->getCustomTags();
+        $handle = $this->getGlobalsHandle();
 
-    if (!array_key_exists($taxonomie, $customTags[$handle])) return null;
+        return $customTags[$selectedSite][$handle] ?? [];
+    }
 
-    return $customTags[$handle][$taxonomie];
-  }
+    public function findNavigationTags(string $selectedSite): array
+    {
+        $customTags = $this->getCustomTags();
+        $handle = $this->getNavigationHandle();
 
-  public function getCollectionTags(): ?array
-  {
-    $customTags = $this->getCustomTags();
-    $handle = $this->getCollectionsHandle();
+        return $customTags[$selectedSite][$handle];
+    }
 
-    if (empty($customTags)) return [];
+    public function findAssetTags(string $selectedSite): array
+    {
+        $customTags = $this->getCustomTags();
+        $handle = $this->getAssetsHandle();
 
-    if (!isset($customTags[$handle])) return [];
-
-    if (!is_array($customTags[$handle])) return [];
-
-    return array_values($customTags[$handle]);
-  }
-
-  public function getTaxonomyTags(): ?array
-  {
-    $customTags = $this->getCustomTags();
-    $handle = $this->getTaxonomiesHandle();
-
-    if (empty($customTags)) return [];
-
-    if (!isset($customTags[$handle])) return [];
-
-    if (!is_array($customTags[$handle])) return [];
-
-    return array_values($customTags[$handle]);
-  }
-
-  public function getGlobalsTag(): ?string
-  {
-    $customTags = $this->getCustomTags();
-    $handle = $this->getGlobalsHandle();
-
-    if (empty($customTags)) return null;
-
-    if (!isset($customTags[$handle])) return null;
-
-    return $customTags[$handle];
-  }
-
-  public function getNavigationTag(): ?string
-  {
-    $customTags = $this->getCustomTags();
-    $handle = $this->getNavigationHandle();
-
-    if (empty($customTags)) return null;
-
-    if (!isset($customTags[$handle])) return null;
-
-    return $customTags[$handle];
-  }
+        return $customTags[$selectedSite][$handle];
+    }
 }
