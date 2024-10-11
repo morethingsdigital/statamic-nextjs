@@ -1,0 +1,28 @@
+{
+  "name": "statamic-nextjs",
+  "version": "1.0.0",
+  "description": "## Installation",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morethingsdigital/statamic-nextjs.git"
+  },
+  "keywords": [],
+  "author": "Christoph Stockinger <hi@morethings.digital>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/morethingsdigital/statamic-nextjs/issues"
+  },
+  "homepage": "https://github.com/morethingsdigital/statamic-nextjs#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "laravel-vite-plugin": "^1.0.5",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "vite": "^5.4.8"
+  }
+}
