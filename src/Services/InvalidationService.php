@@ -64,6 +64,9 @@ class InvalidationService
 
     private function getRevalidationUrl(string $selectedSite)
     {
-        return collect(config('statamic.nextjs.revalidation_urls') ?? [])->keyBy($selectedSite)->first() ?? null;
+        $revalidationUrls = collect(config('statamic.nextjs.revalidation_urls') ?? [])->map(fn($value, $key) => ['site' => $key, 'url' => $value])->values();
+
+        $revalidationUrlBySite = $revalidationUrls->where('site', $selectedSite)->first();
+        return $revalidationUrlBySite['url'] ?? null;
     }
 }
