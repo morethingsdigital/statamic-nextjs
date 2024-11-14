@@ -56,7 +56,7 @@ class InvalidationService
         $headers['Content-Type'] = 'application/json';
 
         if (!is_null(config('statamic.nextjs.revalidation_secret')))
-            $headers['Authorization'] = config('statamic.nextjs.revalidation_secret');
+            $headers['x-api-key'] = config('statamic.nextjs.revalidation_secret');
 
 
         return $headers;
