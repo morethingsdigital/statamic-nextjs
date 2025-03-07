@@ -21,7 +21,7 @@ class InvalidationAssetService
     public function invalidate(Asset $asset)
     {
         try {
-            $this->abortIfDisabled();
+            if (!$this->isEnabled()) return;
 
             $selectedSite = $this->siteService->currenteSite();
             if (is_null($selectedSite)) throw new Exception('site not defined');

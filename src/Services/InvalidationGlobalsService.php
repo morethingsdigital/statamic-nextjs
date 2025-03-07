@@ -22,7 +22,7 @@ class InvalidationGlobalsService
     public function invalidate(Site $selectedSite, GlobalSet $globals, bool $showToast = true)
     {
         try {
-            $this->abortIfDisabled();
+            if (!$this->isEnabled()) return;
 
             $title = $globals->title();
             if (is_null($title)) throw new Exception('global set title not defined');

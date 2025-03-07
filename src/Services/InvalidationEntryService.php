@@ -21,7 +21,7 @@ class InvalidationEntryService
     public function invalidate(Entry $entry, bool $showToast = true)
     {
         try {
-            $this->abortIfDisabled();
+            if (!$this->isEnabled()) return;
 
             $isPublished = $entry->published();
             if (!$isPublished) return;

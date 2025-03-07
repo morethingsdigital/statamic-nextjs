@@ -13,7 +13,7 @@ class InvalidationService
 
     public function __construct()
     {
-        $this->abortIfDisabled();
+        if (!$this->isEnabled()) return;
     }
 
     public function tag(string $selectedSite, string $tag)

@@ -22,7 +22,7 @@ class InvalidationNavigationService
     public function invalidate(NavTree $tree, bool $showToast = true)
     {
         try {
-            $this->abortIfDisabled();
+            if (!$this->isEnabled()) return;
 
             $currentSite = $tree->locale();
             if (is_null($currentSite)) throw new Exception('site not defined');

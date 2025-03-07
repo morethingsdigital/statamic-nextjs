@@ -8,13 +8,6 @@ trait ValidationEnabled
 {
     public function isEnabled(): bool
     {
-        return Config::get('nextjs.enabled', false);
-    }
-
-    public function abortIfDisabled()
-    {
-        if (!$this->isEnabled()) {
-            return;
-        }
+        return Config::get('statamic.nextjs.enabled', false);
     }
 }
