@@ -4,12 +4,14 @@ namespace Morethingsdigital\StatamicNextjs\Services;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
+use MoreThingsDigital\StatamicNextJs\Traits\ValidationEnabled;
 use Statamic\Structures\NavTree;
 use Statamic\Facades\CP\Toast;
 use Statamic\Sites\Site;
 
 class InvalidationNavigationService
 {
+    use ValidationEnabled;
 
     public function __construct(
         private readonly InvalidationService $invalidationService,
@@ -20,6 +22,8 @@ class InvalidationNavigationService
     public function invalidate(NavTree $tree, bool $showToast = true)
     {
         try {
+            $this->abortIfDisabled();
+
             $currentSite = $tree->locale();
             if (is_null($currentSite)) throw new Exception('site not defined');
 

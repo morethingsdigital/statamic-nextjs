@@ -4,12 +4,14 @@ namespace Morethingsdigital\StatamicNextjs\Services;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
+use MoreThingsDigital\StatamicNextJs\Traits\ValidationEnabled;
 use Statamic\Globals\GlobalSet;
 use Statamic\Facades\CP\Toast;
 use Statamic\Sites\Site;
 
 class InvalidationGlobalsService
 {
+    use ValidationEnabled;
 
     public function __construct(
         private readonly InvalidationService $invalidationService,
@@ -20,6 +22,8 @@ class InvalidationGlobalsService
     public function invalidate(Site $selectedSite, GlobalSet $globals, bool $showToast = true)
     {
         try {
+            $this->abortIfDisabled();
+
             $title = $globals->title();
             if (is_null($title)) throw new Exception('global set title not defined');
 

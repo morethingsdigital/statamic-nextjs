@@ -5,15 +5,15 @@ namespace Morethingsdigital\StatamicNextjs\Services;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use MoreThingsDigital\StatamicNextJs\Traits\ValidationEnabled;
 
 class InvalidationService
 {
+    use ValidationEnabled;
 
     public function __construct()
     {
-        if (!config('statamic.nextjs.enabled')) {
-            return;
-        }
+        $this->abortIfDisabled();
     }
 
     public function tag(string $selectedSite, string $tag)

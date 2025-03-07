@@ -4,11 +4,13 @@ namespace Morethingsdigital\StatamicNextjs\Services;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
+use MoreThingsDigital\StatamicNextJs\Traits\ValidationEnabled;
 use Statamic\Assets\Asset;
 use Statamic\Facades\CP\Toast;
 
 class InvalidationAssetService
 {
+    use ValidationEnabled;
 
     public function __construct(
         private readonly InvalidationService $invalidationService,
@@ -19,6 +21,8 @@ class InvalidationAssetService
     public function invalidate(Asset $asset)
     {
         try {
+            $this->abortIfDisabled();
+
             $selectedSite = $this->siteService->currenteSite();
             if (is_null($selectedSite)) throw new Exception('site not defined');
 
